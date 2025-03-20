@@ -1,49 +1,76 @@
 <div class="p-4">
   <h1 class="text-2xl font-bold mb-4">Studio List</h1>
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-    <p-card
-      *ngFor="let studio of studios"
-      [header]="studio.name"
-      class="shadow-lg"
-    >
-      <div class="flex flex-col space-y-2">
-        <p><strong>Location:</strong> {{ studio.location }}</p>
-        <p><strong>Capacity:</strong> {{ studio.capacity }}</p>
-        <p><strong>Price:</strong> ${{ studio.price }} / hour</p>
-        <p><strong>Facilities:</strong> {{ studio.facilities.join(", ") }}</p>
+  <p-table
+    #dt2
+    [value]="filteredStudios"
+    [paginator]="true"
+    [rows]="5"
+    [size]="'small'"
+    showGridlines
+    stripedRows
+    [rowsPerPageOptions]="[5, 10, 20]"
+    [globalFilterFields]="['Name', 'Type', 'Location', 'Amenities']"
+    [scrollable]="true"
+    scrollHeight="400px"
+  >
+    <ng-template #caption>
+      <div class="flex">
+        <div class="card flex justify-center">
+          <p-autoComplete
+            [(ngModel)]="selectedLocation"
+            [suggestions]="filteredLocations"
+            (completeMethod)="filterLocation($event)"
+            field="Address"
+            placeholder="Search for a location"
+          >
+            <ng-template let-location pTemplate="item">
+              <div>
+                <strong>{{ location.Address }}</strong
+                >, {{ location.Area }}, {{ location.City }}
+              </div>
+            </ng-template>
+          </p-autoComplete>
+        </div>
       </div>
-      <ng-template pTemplate="footer">
-        <button
-          pButton
-          type="button"
-          label="Book Now"
-          class="p-button-success w-full"
-        ></button>
-      </ng-template>
-    </p-card>
-  </div>
-</div>
-
-<div class="p-4">
-  <h1 class="text-2xl font-bold mb-4">Studio List</h1>
-  <p-table [value]="studios" [paginator]="true" [rows]="5">
+      <div class="flex">
+        <p-iconfield iconPosition="left" class="ml-auto">
+          <p-inputicon>
+            <i class="pi pi-search"></i>
+          </p-inputicon>
+          <input
+            pInputText
+            type="text"
+            (input)="dt2.filterGlobal($any($event.target).value, 'contains')"
+            placeholder="Search keyword"
+          />
+        </p-iconfield>
+      </div>
+    </ng-template>
     <ng-template pTemplate="header">
       <tr>
-        <th>Name</th>
-        <th>Location</th>
-        <th>Capacity</th>
-        <th>Price</th>
-        <th>Facilities</th>
-        <th>Action</th>
+        <th style="width: 19%">Name</th>
+        <th style="width: 10%">Type</th>
+        <th style="width: 20%">Location</th>
+        <th style="width: 25%">Amenities List</th>
+        <th style="width: 10%" pSortableColumn="PricePerHour">
+          Price per hour <p-sortIcon field="PricePerHour" />
+        </th>
+        <th style="width: 8%" pSortableColumn="Rating">
+          Rating <p-sortIcon field="Rating" />
+        </th>
+        <th style="width: 8%">Action</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-studio>
       <tr>
-        <td>{{ studio.name }}</td>
-        <td>{{ studio.location }}</td>
-        <td>{{ studio.capacity }}</td>
-        <td>${{ studio.price }} / hour</td>
-        <td>{{ studio.facilities.join(", ") }}</td>
+        <td>{{ studio.Name }}</td>
+        <td>{{ studio.Type }}</td>
+        <td>
+          {{ studio.Location | formatLocation }}
+        </td>
+        <td>{{ studio.Amenities.join(", ") }}</td>
+        <td>{{ studio.PricePerHour | currency : studio.Currency }}</td>
+        <td><p-rating [(ngModel)]="studio.Rating" [readonly]="true" /></td>
         <td>
           <button
             pButton
@@ -56,51 +83,3 @@
     </ng-template>
   </p-table>
 </div>
-
-<!-- <div *ngIf="isLoading" class="flex justify-center items-center h-screen">
-  <p-progressSpinner></p-progressSpinner>
-</div>
-
-<div
-  *ngIf="!isLoading"
-  class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6"
->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
-    <p-card
-      *ngFor="let studio of studios"
-      [header]="studio.Name"
-      class="shadow-lg"
-    >
-      <div class="flex flex-col space-y-4">
-        <p><strong>Type:</strong> {{ studio.Type }}</p>
-
-        <p>
-          <strong>Location:</strong> {{ studio.Location.City }},
-          {{ studio.Location.Area }}, {{ studio.Location.Address }}
-        </p>
-
-        <p><strong>Amenities:</strong> {{ studio.Amenities.join(", ") }}</p>
-
-        <p>
-          <strong>Price:</strong> {{ studio.PricePerHour }}
-          {{ studio.Currency }} / hour
-        </p>
-
-        <p><strong>Rating:</strong> {{ studio.Rating }} / 5</p>
-
-        <p>
-          <strong>Availability:</strong> {{ studio.Availability.Open }} -
-          {{ studio.Availability.Close }}
-        </p>
-
-        <button
-          pButton
-          type="button"
-          label="Book Now"
-          class="p-button-primary"
-          (click)="openBookingDialog(studio)"
-        ></button>
-      </div>
-    </p-card>
-  </div>
-</div> -->
