@@ -11,6 +11,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { BookingService } from '../../../core/services/booking/booking.service';
 import { DataHelperService } from '../../services/helpers/data-helper.service';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
+import { FormatLocationPipe } from '../../pipes/format-location.pipe';
 
 @Component({
   selector: 'app-booking-modal',
@@ -27,7 +28,7 @@ import { DynamicDialogRef } from 'primeng/dynamicdialog';
   ],
   templateUrl: './booking-modal.component.html',
   styleUrl: './booking-modal.component.scss',
-  providers: [MessageService],
+  providers: [MessageService, FormatLocationPipe],
 })
 export class BookingModalComponent {
   @Input() studio: any; // Selected studio
@@ -49,6 +50,7 @@ export class BookingModalComponent {
     private messageService: MessageService,
     private bookingService: BookingService,
     private dataHelperService: DataHelperService,
+    public formatLocationPipe: FormatLocationPipe,
     public ref: DynamicDialogRef
   ) {}
 
@@ -141,7 +143,7 @@ export class BookingModalComponent {
       studioId: this.studio.Id,
       studioName: this.studio.Name,
       studioType: this.studio.Type,
-      location: `${this.studio.Location.City}, ${this.studio.Location.Area}`,
+      location: this.formatLocationPipe.transform(this.studio.Location),
       date: this.bookingDate,
       timeSlot: this.selectedTimeSlot,
       userName: this.userName,
@@ -163,10 +165,22 @@ export class BookingModalComponent {
     const isBooked = bookings.some(
       (booking) =>
         booking.studioId === this.studio.Id &&
-        booking.date === this.bookingDate &&
+        this.isSameDate(
+          new Date(booking.date),
+          new Date(this.bookingDate as any)
+        ) &&
         booking.timeSlot === this.selectedTimeSlot
     );
+    console.log(this.bookingDate);
     return !isBooked;
+  }
+
+  isSameDate(date1: Date, date2: Date): boolean {
+    return (
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate()
+    );
   }
 
   closeModal() {

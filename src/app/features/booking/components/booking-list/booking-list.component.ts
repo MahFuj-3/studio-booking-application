@@ -36,6 +36,7 @@ export class BookingListComponent {
     this.bookings = this.bookingService.getBookings().map((booking: any) => ({
       userName: booking.userName,
       userEmail: booking.userEmail,
+      studioName: booking.studioName,
       studioType: booking.studioType,
       location: booking.location,
       date: new Date(booking.date),
