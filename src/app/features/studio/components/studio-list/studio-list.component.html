@@ -1,7 +1,18 @@
 <div class="p-4">
-  <h1 class="text-2xl font-bold mb-4">Studio List</h1>
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold mb-4">Studio List</h1>
+    <div class="p-4">
+      <p-button
+        routerLink="/en/booking/list"
+        class="text-blue-500"
+        variant="outlined"
+        severity="success"
+        >View Bookings</p-button
+      >
+    </div>
+  </div>
   <p-table
-    #dt2
+    #dt1
     [value]="filteredStudios"
     [paginator]="true"
     [rows]="5"
@@ -9,9 +20,9 @@
     showGridlines
     stripedRows
     [rowsPerPageOptions]="[5, 10, 20]"
-    [globalFilterFields]="['Name', 'Type', 'Location', 'Amenities']"
     [scrollable]="true"
     scrollHeight="400px"
+    [globalFilterFields]="['Name', 'Type', 'Location', 'Amenities']"
   >
     <ng-template #caption>
       <div class="flex items-center">
@@ -47,18 +58,24 @@
         </div>
         <!-- <p-button label="Search" icon="pi pi-search" /> -->
         <div class="">
-          <button
-            pButton
+          <p-button
             type="button"
             size="small"
             class="mr-2"
+            severity="success"
             (click)="searchStudiosByRadius()"
           >
             Search
-          </button>
-          <button pButton type="button" size="small" (click)="resetFilters()">
+          </p-button>
+          <p-button
+            type="button"
+            size="small"
+            variant="outlined"
+            severity="success"
+            (click)="resetFilters()"
+          >
             Reset
-          </button>
+          </p-button>
         </div>
       </div>
 
@@ -70,7 +87,7 @@
           <input
             pInputText
             type="text"
-            (input)="dt2.filterGlobal($any($event.target).value, 'contains')"
+            (input)="dt1.filterGlobal($any($event.target).value, 'contains')"
             placeholder="Search keyword"
           />
         </p-iconfield>
@@ -79,7 +96,7 @@
     <ng-template pTemplate="header">
       <tr>
         <th style="width: 19%">Name</th>
-        <th style="width: 10%">Type</th>
+        <th style="width: 10%">Studio Type</th>
         <th style="width: 20%">Location</th>
         <th style="width: 25%">Amenities List</th>
         <th style="width: 10%" pSortableColumn="PricePerHour">
@@ -102,14 +119,19 @@
         <td>{{ studio.PricePerHour | currency : studio.Currency }}</td>
         <td><p-rating [(ngModel)]="studio.Rating" [readonly]="true" /></td>
         <td>
-          <button
-            pButton
+          <p-button
             type="button"
             label="Book Now"
             size="small"
-            class="p-button-success"
-          ></button>
+            (click)="openBookingDialog(studio)"
+            severity="success"
+          ></p-button>
         </td>
+      </tr>
+    </ng-template>
+    <ng-template #emptymessage>
+      <tr>
+        <td colspan="7" class="text-center">No Records found.</td>
       </tr>
     </ng-template>
   </p-table>

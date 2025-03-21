@@ -3,7 +3,7 @@ import { CardModule } from 'primeng/card';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { StudioService } from '../../../../core/services/studio/studio.service';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { RatingModule } from 'primeng/rating';
@@ -20,6 +20,12 @@ import { FormatLocationPipe } from '../../../../shared/pipes/format-location.pip
 import { Toast, ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { DialogService } from 'primeng/dynamicdialog';
+import { BookingModalComponent } from '../../../../shared/modals/booking-modal/booking-modal.component';
+import { DataHelperService } from '../../../../shared/services/helpers/data-helper.service';
+import { BookingService } from '../../../../core/services/booking/booking.service';
+import { SelectModule } from 'primeng/select';
+import { DatePickerModule } from 'primeng/datepicker';
 
 @Component({
   selector: 'app-studio-list',
@@ -41,10 +47,12 @@ import { InputNumberModule } from 'primeng/inputnumber';
     FormatLocationPipe,
     ToastModule,
     Toast,
+    SelectModule,
+    DatePickerModule,
   ],
   templateUrl: './studio-list.component.html',
   styleUrl: './studio-list.component.scss',
-  providers: [MessageService],
+  providers: [MessageService, DialogService, BookingService, DatePipe],
 })
 export class StudioListComponent {
   studios: any[] = [];
@@ -57,7 +65,10 @@ export class StudioListComponent {
 
   constructor(
     private studioService: StudioService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private dialogService: DialogService,
+    private datePipe: DatePipe,
+    private dataHelperService: DataHelperService
   ) {}
 
   ngOnInit(): void {
@@ -75,7 +86,30 @@ export class StudioListComponent {
   }
 
   openBookingDialog(studio: any) {
-    console.log('Booking studio:', studio);
+    this.dataHelperService.sendData(studio);
+    const ref = this.dialogService.open(BookingModalComponent, {
+      header: 'Book Studio',
+      width: '500px',
+      maximizable: true,
+      data: {
+        studio: studio,
+      },
+    });
+
+    ref.onClose.subscribe((booking) => {
+      if (booking) {
+        console.log('Booking confirmed:', booking);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Booking Confirmed',
+          detail: `Your booking for ${
+            booking.studioName
+          } on ${this.datePipe.transform(booking.date, 'MMMM d, y')} at ${
+            booking.timeSlot
+          } has been confirmed.`,
+        });
+      }
+    });
   }
 
   filterLocation(event: AutoCompleteCompleteEvent) {

@@ -8,4 +8,9 @@ export const featureRoutes: Routes = [
     loadChildren: () =>
       import('./studio/studio.routes').then((f) => f.studioRoutes),
   },
+  {
+    path: 'booking',
+    loadChildren: () =>
+      import('./booking/booking.routes').then((f) => f.bookingRoutes),
+  },
 ];
