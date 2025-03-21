@@ -1,0 +1,125 @@
+<!-- <ng-template #header>
+  <div class="inline-flex items-center justify-center gap-2">
+    <span class="font-bold whitespace-nowrap">Amy Elsner</span>
+  </div>
+</ng-template> -->
+<div class="min-h-[500px] flex flex-col justify-between">
+  <div>
+    <div class="text-surface-500 dark:text-surface-400 block mb-4">
+      {{ studio.Name }}
+    </div>
+    <div class="block mb-4">
+      <span
+        >Available From: {{ studio.Availability.Open }} To:
+        {{ studio.Availability.Close }}</span
+      >
+    </div>
+    <form class="p-fluid">
+      <!-- Date Picker -->
+      <div class="flex items-center my-2">
+        <div class="w-[10rem]">
+          <label for="date">Date</label>
+        </div>
+        <div class="">
+          <div class="field">
+            <p-datepicker
+              [(ngModel)]="bookingDate"
+              placeholder="Pick a Date"
+              class="w-[15rem]"
+              name="date"
+              showIcon
+              iconDisplay="input"
+              required
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Time Slot Picker -->
+      <div class="flex items-center my-2">
+        <div class="w-[10rem]">
+          <label for="timeSlot">Time Slot</label>
+        </div>
+        <div class=" ">
+          <div class="field">
+            <p-select
+              class="w-[15rem]"
+              [(ngModel)]="selectedTimeSlot"
+              name="timeSlot"
+              id="timeSlot"
+              placeholder="Select a Time Slot"
+              [options]="availableTimeSlots"
+              required
+            ></p-select>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Info -->
+      <div class="flex items-center my-2">
+        <div class="w-[10rem]">
+          <label for="name">Name</label>
+        </div>
+        <div class=" ">
+          <div class="field">
+            <input
+              pInputText
+              class="w-[15rem]"
+              [(ngModel)]="userName"
+              name="name"
+              id="name"
+              type="text"
+              placeholder="Your Name"
+              required
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center my-2">
+        <div class="w-[10rem]">
+          <label for="email">Email</label>
+        </div>
+        <div class="">
+          <div class="field">
+            <input
+              pInputText
+              class="w-[15rem]"
+              [(ngModel)]="userEmail"
+              name="email"
+              id="email"
+              type="email"
+              placeholder="Your Email"
+              required
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="errorMessage" class="text-yellow-500 p-error">
+        {{ errorMessage }}
+      </div>
+    </form>
+  </div>
+  <div class="text-end">
+    <p-button
+      type="button"
+      size="small"
+      variant="outlined"
+      severity="secondary"
+      label="Cancel"
+      (onClick)="closeModal()"
+    />
+    <p-button
+      label="Book Now"
+      size="small"
+      (onClick)="onSubmit()"
+      class="ml-4"
+      severity="primary"
+    />
+  </div>
+</div>
+
+<!-- Confirmation Message -->
+<p-toast></p-toast>
