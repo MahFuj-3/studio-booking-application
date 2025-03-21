@@ -14,12 +14,13 @@
     scrollHeight="400px"
   >
     <ng-template #caption>
-      <div class="flex">
+      <div class="flex items-center">
         <div class="card flex justify-center">
           <p-autoComplete
             [(ngModel)]="selectedLocation"
             [suggestions]="filteredLocations"
             (completeMethod)="filterLocation($event)"
+            (onSelect)="onLocationSelect($event)"
             field="Address"
             placeholder="Search for a location"
           >
@@ -31,7 +32,36 @@
             </ng-template>
           </p-autoComplete>
         </div>
+        <div class="card flex items-center mx-2">
+          <span>Search Studios Within</span>
+          <p-inputnumber
+            class="m-2"
+            [(ngModel)]="studioDistance"
+            inputId="studioDistance"
+            mode="decimal"
+            size="small"
+            placeholder="0"
+            [inputStyle]="{ width: '5rem' }"
+          />
+          <span>KM</span>
+        </div>
+        <!-- <p-button label="Search" icon="pi pi-search" /> -->
+        <div class="">
+          <button
+            pButton
+            type="button"
+            size="small"
+            class="mr-2"
+            (click)="searchStudiosByRadius()"
+          >
+            Search
+          </button>
+          <button pButton type="button" size="small" (click)="resetFilters()">
+            Reset
+          </button>
+        </div>
       </div>
+
       <div class="flex">
         <p-iconfield iconPosition="left" class="ml-auto">
           <p-inputicon>
@@ -76,6 +106,7 @@
             pButton
             type="button"
             label="Book Now"
+            size="small"
             class="p-button-success"
           ></button>
         </td>
@@ -83,3 +114,4 @@
     </ng-template>
   </p-table>
 </div>
+<p-toast />
